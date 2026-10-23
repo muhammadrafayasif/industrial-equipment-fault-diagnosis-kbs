@@ -235,10 +235,13 @@ the type model is trained from the complete type/location label. The test
 script reports a classification report and confusion matrix for both models.
 
 At serving time, the FastAPI application loads `fault_model.pkl` and
-`type_model.pkl` once at startup. Each result contains the recording ID,
-zero-based window number, integer fault prediction, type prediction, and
-maintenance action. The API does not perform a second probabilistic
-inference, temporal smoothing, or aggregation across windows.
+`type_model.pkl` once at startup. Results with the same recording ID, fault
+prediction, and type prediction are merged into one result. Each result
+contains the recording ID, the first matching zero-based window number,
+`samples` equal to 2,048 times the number of merged windows, the integer fault
+prediction, type prediction, model confidence for both selected predictions,
+and maintenance action. Confidence is the selected class probability from each
+classifier; merged results use the mean confidence across their windows.
 
 ### 3.4 Conflict Resolution Strategy
 
